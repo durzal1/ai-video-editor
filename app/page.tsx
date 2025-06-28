@@ -1,8 +1,10 @@
-// app/page.tsx
-import { VideoDropzone } from '../components/VideoDropZone';
-import { VideoChat } from '../components/VideoChat';
+// app/page.tsx (stays as server component)
+import { VideoEditor } from '@/components/VideoEditor';
 
 export default async function Home() {
+    // You can still do server-side data fetching here if needed
+    // const config = await getServerConfig();
+
     return (
         <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
             <div className="container mx-auto py-12 pr-0 lg:pr-[420px] transition-all duration-300">
@@ -16,17 +18,9 @@ export default async function Home() {
                     </p>
                 </div>
 
-                {/* Main content area with flex layout */}
-                <div className="flex gap-6 px-4">
-                    {/* Video dropzone takes remaining space */}
-                    <div className="flex-1">
-                        <VideoDropzone />
-                    </div>
-                </div>
+                {/* Client wrapper handles all the interactive parts */}
+                <VideoEditor />
             </div>
-
-            {/* Chat component */}
-            <VideoChat />
         </main>
     );
 }

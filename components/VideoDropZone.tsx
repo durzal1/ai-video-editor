@@ -4,7 +4,14 @@
 import {useState, useCallback, useEffect} from 'react';
 import { Upload, Film, X, Play, Pause, Volume2, Maximize, Download, Clock, FileVideo } from 'lucide-react';
 
-export function VideoDropzone() {
+
+interface VideoDropzoneProps {
+    onVideoUploaded: (isUploaded: boolean) => void; // Change to accept boolean
+    onVideoURLChange: (url: string) => void;
+
+}
+
+export function VideoDropzone({ onVideoUploaded, onVideoURLChange }: VideoDropzoneProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [videoName, setVideoName] = useState<string | null>(null);
     const [videoSize, setVideoSize] = useState<number>(0);
@@ -102,6 +109,13 @@ export function VideoDropzone() {
 
     useEffect(() => {
         console.log(videoUrl);
+        if (videoUrl) console.log("there")
+
+        const hasVideo = videoUrl !== null && videoUrl !== undefined && videoUrl.length > 0;
+        console.log(hasVideo);
+        onVideoUploaded(hasVideo);
+        onVideoURLChange(videoUrl!)
+
     }, [videoUrl]);
 
     return (

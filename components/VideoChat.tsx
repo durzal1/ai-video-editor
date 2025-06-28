@@ -11,16 +11,22 @@ interface Message {
     content: string;
 }
 
-export function VideoChat() {
+interface chatOpen{
+    isOn: boolean;
+    videoURL: string;
+}
+
+export function VideoChat({isOn, videoURL}: chatOpen) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
             role: 'assistant',
             content: 'How can I help edit your video?',
         },
+
     ]);
     const [input, setInput] = useState('');
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -31,7 +37,11 @@ export function VideoChat() {
         scrollToBottom();
     }, [messages]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        setIsOpen(isOn)
+    }, [isOn]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
 
@@ -43,6 +53,29 @@ export function VideoChat() {
 
         setMessages([...messages, newMessage]);
         setInput('');
+
+        console.log(messages);
+        console.log(videoURL)
+
+        const response = await fetch('http://localhost:5000/api/process-query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: 'Find moments with people talking',
+            }),
+        });
+
+        if (!response.ok) throw new Error(response.statusText);
+
+        const data = await response.json();
+
+        console.log(data);
+
+
+
+
 
         // Simulate assistant response
         setTimeout(() => {
@@ -113,7 +146,9 @@ export function VideoChat() {
                                     </p>
                                 </div>
                             </div>
-                        ))}
+
+
+                            ))}
                         <div ref={messagesEndRef} />
                     </div>
 
@@ -151,7 +186,7 @@ export function VideoChat() {
             </div>
 
             {/* Toggle Button - Dark Theme */}
-            {!isOpen && (
+            {!isOpen && isOn && (
                 <button
                     onClick={() => setIsOpen(true)}
                     className={cn(
